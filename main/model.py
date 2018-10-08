@@ -1,6 +1,16 @@
 import Leap
 from enum import Enum
 
+def fingersFromHand(hand):
+    thumb = hand.fingers.finger_type(Leap.Finger.TYPE_THUMB)[0]
+    index = hand.fingers.finger_type(Leap.Finger.TYPE_INDEX)[0]
+    middle = hand.fingers.finger_type(Leap.Finger.TYPE_MIDDLE)[0]
+    ring = hand.fingers.finger_type(Leap.Finger.TYPE_RING)[0]
+    pinky = hand.fingers.finger_type(Leap.Finger.TYPE_PINKY)[0]
+
+    fingers = dict(thumb=thumb, index=index, middle=middle, ring=ring, pinky=pinky)
+
+    return fingers
 
 class Gesture(Enum):
     gesture0 = (0, "Gesto 0")
@@ -9,7 +19,7 @@ class Gesture(Enum):
 
     def __init__(self, value, name):
         self.code = value
-        self.name = name
+        self.gesture_name = name
 
     @staticmethod
     def gesture_from_code(code):
@@ -17,7 +27,7 @@ class Gesture(Enum):
             return Gesture.gesture0
         elif code == 1:
             return Gesture.gesture1
-        else:
+        elif code == 2:
             return Gesture.gesture2
 
 
@@ -39,15 +49,49 @@ class FingerModel:
 
 class HandModel:
 
-    def __init__(self, delta_palm_position, arm_angle):
+    def __init__(self, hand, previous_palm_position, vector=None):
         self.fingers = []
-        self.delta_palm_position = delta_palm_position
-        self.arm_angle = arm_angle
+        if vector is None:
+            self.delta_palm_position = Leap.Vector.__sub__(hand.palm_position, previous_palm_position)
+            self.arm_angle = hand.direction.angle_to(hand.arm.direction) * Leap.RAD_TO_DEG
 
-    def discretize(self, value):
-        return round(value, 1)
+            fingers = fingersFromHand(hand)
+
+            for _, finger in fingers.iteritems():
+                hand_direction = hand.direction
+                proximal_angle = finger.bone(Leap.Bone.TYPE_PROXIMAL).direction.angle_to(
+                    hand_direction) * Leap.RAD_TO_DEG
+                distal_angle = finger.bone(Leap.Bone.TYPE_DISTAL).direction.angle_to(
+                    hand_direction) * Leap.RAD_TO_DEG
+
+                if finger.type != Leap.Finger.TYPE_THUMB:
+                    intermediate_angle = finger.bone(Leap.Bone.TYPE_INTERMEDIATE).direction.angle_to(
+                        hand_direction) * Leap.RAD_TO_DEG
+                    self.add_finger(
+                        FingerModel(finger.type, proximal_angle, distal_angle, intermediate_angle))
+                else:
+                    self.add_finger(
+                        FingerModel(finger.type, proximal_angle, distal_angle))
+        else:
+            self.delta_palm_position = Leap.Vector(vector[0], vector[1], vector[2])
+            self.arm_angle = vector[3]
+            self.thumb = FingerModel(Leap.Finger.TYPE_THUMB, vector[4], vector[5])
+            self.index = FingerModel(Leap.Finger.TYPE_INDEX, vector[6], vector[7], vector[8])
+            self.middle = FingerModel(Leap.Finger.TYPE_MIDDLE, vector[9], vector[10], vector[11])
+            self.ring = FingerModel(Leap.Finger.TYPE_RING, vector[12], vector[13], vector[14])
+            self.pinky = FingerModel(Leap.Finger.TYPE_PINKY, vector[15], vector[16], vector[17])
 
     def add_finger(self, finger):
+        if finger.type is Leap.Finger.TYPE_THUMB:
+            self.thumb = finger
+        elif finger.type is Leap.Finger.TYPE_INDEX:
+            self.index = finger
+        elif finger.type is Leap.Finger.TYPE_MIDDLE:
+            self.middle = finger
+        elif finger.type is Leap.Finger.TYPE_RING:
+            self.ring = finger
+        elif finger.type is Leap.Finger.TYPE_PINKY:
+            self.pinky = finger
         self.fingers.append(finger)
 
     def print_hand(self):
@@ -55,18 +99,71 @@ class HandModel:
         for finger in self.fingers:
             finger.print_finger()
 
-    def raw_data(self):
-        raw_data = [self.discretize(self.delta_palm_position.x), self.discretize(self.delta_palm_position.y),
-                    self.discretize(self.delta_palm_position.z), self.arm_angle]
+class AvolaModel:
+        def __init__(self, hand):
+            fingers = fingersFromHand(hand)
 
-        for finger in self.fingers:
-            raw_data.append(finger.proximal_angle)
-            raw_data.append(finger.distal_angle)
-            if finger.type != Leap.Finger.TYPE_THUMB:
-                raw_data.append(finger.proximal_angle)
+            w0 = fingers['thumb'].bone(Leap.Bone.TYPE_DISTAL).direction.angle_to(fingers['thumb'].bone(Leap.Bone.TYPE_PROXIMAL).direction)
+            w1 = fingers['index'].bone(Leap.Bone.TYPE_DISTAL).direction.angle_to(fingers['index'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction)
+            w2 = fingers['middle'].bone(Leap.Bone.TYPE_DISTAL).direction.angle_to(fingers['middle'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction)
+            w3 = fingers['ring'].bone(Leap.Bone.TYPE_DISTAL).direction.angle_to(fingers['ring'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction)
+            w4 = fingers['pinky'].bone(Leap.Bone.TYPE_DISTAL).direction.angle_to(fingers['pinky'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction)
 
-        return raw_data
+            b0 = fingers['thumb'].bone(Leap.Bone.TYPE_PROXIMAL).direction.angle_to(fingers['thumb'].bone(Leap.Bone.TYPE_METACARPAL).direction)
+            b1 = fingers['index'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction.angle_to(fingers['index'].bone(Leap.Bone.TYPE_PROXIMAL).direction)
+            b2 = fingers['middle'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction.angle_to(fingers['middle'].bone(Leap.Bone.TYPE_PROXIMAL).direction)
+            b3 = fingers['ring'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction.angle_to(fingers['ring'].bone(Leap.Bone.TYPE_PROXIMAL).direction)
+            b4 = fingers['pinky'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction.angle_to(fingers['pinky'].bone(Leap.Bone.TYPE_PROXIMAL).direction)
 
+            u0 = fingers['thumb'].bone(Leap.Bone.TYPE_DISTAL).next_joint.x
+            v0 = fingers['thumb'].bone(Leap.Bone.TYPE_DISTAL).next_joint.y
+            z0 = fingers['thumb'].bone(Leap.Bone.TYPE_DISTAL).next_joint.z
+
+            u1 = fingers['index'].bone(Leap.Bone.TYPE_DISTAL).next_joint.x
+            v1 = fingers['index'].bone(Leap.Bone.TYPE_DISTAL).next_joint.y
+            z1 = fingers['index'].bone(Leap.Bone.TYPE_DISTAL).next_joint.z
+
+            u2 = fingers['middle'].bone(Leap.Bone.TYPE_DISTAL).next_joint.x
+            v2 = fingers['middle'].bone(Leap.Bone.TYPE_DISTAL).next_joint.y
+            z2 = fingers['middle'].bone(Leap.Bone.TYPE_DISTAL).next_joint.z
+
+            u3 = fingers['ring'].bone(Leap.Bone.TYPE_DISTAL).next_joint.x
+            v3 = fingers['ring'].bone(Leap.Bone.TYPE_DISTAL).next_joint.y
+            z3 = fingers['ring'].bone(Leap.Bone.TYPE_DISTAL).next_joint.z
+
+            u4 = fingers['pinky'].bone(Leap.Bone.TYPE_DISTAL).next_joint.x
+            v4 = fingers['pinky'].bone(Leap.Bone.TYPE_DISTAL).next_joint.y
+            z4 = fingers['pinky'].bone(Leap.Bone.TYPE_DISTAL).next_joint.z
+
+            u5 = hand.palm_position.x
+            v5 = hand.palm_position.y
+            z5 = hand.palm_position.z
+
+            y1 = fingers['index'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction.angle_to(fingers['middle'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction)
+            y2 = fingers['middle'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction.angle_to(fingers['ring'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction)
+            y3 = fingers['ring'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction.angle_to(fingers['pinky'].bone(Leap.Bone.TYPE_INTERMEDIATE).direction)
+
+            self.feature_list = [w0, w1, w2, w3, w4,
+                                b0, b1, b2, b3, b4,
+                                u0, v0, z0,
+                                u1, v1, z1,
+                                u2, v2, z2,
+                                u3, v3, z3,
+                                u4, v4, z4,
+                                u5, v5, z5,
+                                y1, y2, y3]
+
+class LuModel:
+    def __init__(self, hand, M):
+        C = hand.palm_position
+        fingers = fingersFromHand(hand)
+        features = []
+        for finger in fingers:
+            features.append(finger.bone(Leap.Bone.TYPE_DISTAL).next_joint.distance_to(C)/M)
+
+        for finger in fingers:
+            pass #TODO
+            #features.append(finger.bone(Leap.Bone.TYPE_DISTAL).next_joint.
 
 class Sequence:
 
@@ -76,6 +173,44 @@ class Sequence:
     def add_data(self, data):
         self.data_list.append(data)
 
+    def discretize(self, value):
+        return round(value, 1)
+
+    def raw_data(self):
+        raw_data_list = []
+        if isinstance(self.data_list[0], HandModel):
+            for hand_model in self.data_list:
+                raw_data = [self.discretize(hand_model.delta_palm_position.x), self.discretize(hand_model.delta_palm_position.y),
+                           self.discretize(hand_model.delta_palm_position.z), hand_model.arm_angle]
+
+                raw_data.append(hand_model.thumb.proximal_angle)
+                raw_data.append(hand_model.thumb.distal_angle)
+
+                raw_data.append(hand_model.index.proximal_angle)
+                raw_data.append(hand_model.index.intermediate_angle)
+                raw_data.append(hand_model.index.distal_angle)
+
+                raw_data.append(hand_model.middle.proximal_angle)
+                raw_data.append(hand_model.middle.intermediate_angle)
+                raw_data.append(hand_model.middle.distal_angle)
+
+                raw_data.append(hand_model.ring.proximal_angle)
+                raw_data.append(hand_model.ring.intermediate_angle)
+                raw_data.append(hand_model.ring.distal_angle)
+
+                raw_data.append(hand_model.pinky.proximal_angle)
+                raw_data.append(hand_model.pinky.intermediate_angle)
+                raw_data.append(hand_model.pinky.distal_angle)
+
+                raw_data_list.append(raw_data)
+
+        elif isinstance(self.data_list[0], AvolaModel):
+            for avola_model in self.data_list:
+                raw_data_list.append(avola_model.feature_list)
+
+        return raw_data_list
+
+
 
 class ClassifiedSequence:
 
@@ -84,11 +219,5 @@ class ClassifiedSequence:
         self.gesture = gesture
 
     def to_dict(self):
-        dictionary = dict(gesture=self.gesture.code, sequence=[])
-        for data in self.sequence.dataList:
-            if type(data) is HandModel:
-                dictionary['sequence'].append(data.raw_data())
-            else:
-                dictionary['sequence'].append(data)
+        return dict(gesture=self.gesture.code, sequence=self.sequence.raw_data())
 
-        return dictionary

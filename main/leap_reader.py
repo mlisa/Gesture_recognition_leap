@@ -10,10 +10,16 @@ class LeapReader:
         self.controller = Leap.Controller()
         self.timeout = timeout
         self.data = m.Sequence()
+        self.avola_data = m.Sequence()
         self.frames = []
         self.timeout_start = None
         self.previous_palm_position = None
         self.done_reading = False
+        self.M = 0
+
+    def setting(self, fps, timeout):
+        self.fps = fps
+        self.timeout = timeout
 
     def read(self):
         frame = self.controller.frame()
@@ -22,34 +28,19 @@ class LeapReader:
 
     def compute_frame(self, frame):
         for hand in frame.hands:
-            arm_angle = hand.direction.angle_to(hand.arm.direction) * Leap.RAD_TO_DEG
 
             if self.previous_palm_position is None:
                 self.previous_palm_position = hand.palm_position
 
-            delta_palm = Leap.Vector.__sub__(hand.palm_position, self.previous_palm_position)
-
-            hand_model = m.HandModel(delta_palm, arm_angle)
-
+            hand_model = m.HandModel(hand, self.previous_palm_position)
             self.previous_palm_position = hand.palm_position
 
-            for finger in hand.fingers:
-                hand_direction = hand.direction
-                proximal_angle = finger.bone(Leap.Bone.TYPE_PROXIMAL).direction.angle_to(
-                    hand_direction) * Leap.RAD_TO_DEG
-                distal_angle = finger.bone(Leap.Bone.TYPE_DISTAL).direction.angle_to(
-                        hand_direction) * Leap.RAD_TO_DEG
+            avola_model = m.AvolaModel(hand)
 
-                if finger.type != Leap.Finger.TYPE_THUMB:
-                    intermediate_angle = finger.bone(Leap.Bone.TYPE_INTERMEDIATE).direction.angle_to(
-                        hand_direction) * Leap.RAD_TO_DEG
-                    hand_model.add_finger(
-                        m.FingerModel(finger.type, proximal_angle, distal_angle, intermediate_angle))
-                else:
-                    hand_model.add_finger(
-                        m.FingerModel(finger.type, proximal_angle, distal_angle))
+            self.data.add_data(hand_model)
+            self.avola_data.add_data(avola_model)
 
-            self.data.add_data(self.discretize_data(hand_model))
+            #self.data.add_data(self.discretize_data(hand_model))
 
     def discretize_data(self, hand_model):
         discretized_hand_model = m.HandModel(hand_model.delta_palm_position, self.discretize(hand_model.arm_angle))
@@ -85,11 +76,14 @@ class LeapReader:
             self.compute_frame(frame)
         self.done_reading = True
 
-        print(len(self.data.data_list))
-        return self.data
+        return self.data, self.avola_data
 
     def check_if_one_hand(self):
-        return len(self.controller.frame().hands)
+        hands = self.controller.frame().hands
+        if self.M == 0 & len(hands) == 1:
+            self.M = hands[0].palm_position.distance_to(hands[0].fingers.finger_type(Leap.Finger.TYPE_MIDDLE)
+                                                        .bone(Leap.Bone.TYPE_DISTAL).next_joint)
+        return len(hands)
 
 
 
