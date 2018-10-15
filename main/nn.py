@@ -17,6 +17,8 @@ class RNN:
         self.n_epochs = params['epoch']
         self.batch_size = params['batch']
 
+        print "---"
+        print self.n_inputs
         self.input_data = tf.placeholder(tf.float32, [None, self.n_steps, self.n_inputs])
         self.output_data = tf.placeholder(tf.int32, [None])
 
@@ -47,6 +49,7 @@ class RNN:
                     batch = training_list[:self.batch_size]
                     del training_list[:self.batch_size]
                     input_batch, output_batch = self.compute_batch(batch)
+                    print str(len(input_batch[0][0]))
                     sess.run(self.training_op, feed_dict={self.input_data: input_batch, self.output_data: output_batch})
             if should_save:
                 self.model_saver = tf.train.Saver()

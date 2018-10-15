@@ -74,21 +74,21 @@ class Gui:
         fps_label = tk.Label(self.window, text="FPS:")
         fps_label.grid(column=0, row=9)
         self.fps = tk.IntVar()
-        self.fps.set(20)
+        self.fps.set(200)
         fps_text_area = tk.Entry(self.window, textvariable=self.fps, width=5)
         fps_text_area.grid(column=1, row=9)
 
         timeout_label = tk.Label(self.window, text="Timeout:")
         timeout_label.grid(column=0, row=10)
         self.timeout = tk.IntVar()
-        self.timeout.set(3)
+        self.timeout.set(1)
         timeout_text_area = tk.Entry(self.window, textvariable=self.timeout, width=5)
         timeout_text_area.grid(column=1, row=10)
 
         input_label = tk.Label(self.window, text="Input:")
         input_label.grid(column=0, row=11)
         self.input = tk.IntVar()
-        self.input.set(31)
+        self.input.set(32)
         input_text_area = tk.Entry(self.window, textvariable=self.input, width=5)
         input_text_area.grid(column=1, row=11)
 
@@ -109,7 +109,7 @@ class Gui:
         output_label = tk.Label(self.window, text="Output:")
         output_label.grid(column=0, row=14)
         self.output = tk.IntVar()
-        self.output.set(3)
+        self.output.set(30)
         output_text_area = tk.Entry(self.window, textvariable=self.output, width=5)
         output_text_area.grid(column=1, row=14)
 
@@ -130,14 +130,14 @@ class Gui:
         batch_label = tk.Label(self.window, text="Batch size:")
         batch_label.grid(column=0, row=17)
         self.batch = tk.IntVar()
-        self.batch.set(50)
+        self.batch.set(12)
         batch_text_area = tk.Entry(self.window, textvariable=self.batch, width=5)
         batch_text_area.grid(column=1, row=17)
 
         modify_reader_btn = tk.Button(self.window, text="Modifica Reader", command=self.modify_reader)
         modify_reader_btn.grid(column=2, row=10)
 
-        modify_net_btn = tk.Button(self.window, text="Modifica rete", command=self.modify_net)
+        modify_net_btn = tk.Button(self.window, text="Inizializza rete", command=self.modify_net)
         modify_net_btn.grid(column=2, row=17)
 
         self.gesture = tk.IntVar()
