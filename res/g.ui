@@ -1,0 +1,335 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface>
+  <object class="tk.Frame" id="main_frame">
+    <property name="height">400</property>
+    <property name="width">900</property>
+    <layout>
+      <property name="column">0</property>
+      <property name="propagate">True</property>
+      <property name="row">0</property>
+    </layout>
+    <child>
+      <object class="tk.Frame" id="read_frame">
+        <property name="height">300</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">1</property>
+          <property name="pady">15</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+          <property name="sticky">n</property>
+          <columns>
+            <column id="0">
+              <property name="minsize">150</property>
+            </column>
+            <column id="1">
+              <property name="minsize">150</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="tk.Label" id="Label_1">
+            <property name="text" translatable="yes">Creazione dataset</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="extrusion_btn">
+            <property name="text" translatable="yes">Extrusion</property>
+            <property name="variable">int:gesture</property>
+            <property name="value">0</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="traslation_btn">
+            <property name="text" translatable="yes">Traslation</property>
+            <property name="value">3</property>
+            <property name="variable">int:gesture</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="rotation_btn">
+            <property name="text" translatable="yes">Rotation</property>
+            <property name="value">2</property>
+            <property name="variable">int:gesture</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">3</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="left_swipe_btn">
+            <property name="text" translatable="yes">Left swipe</property>
+            <property name="value">5</property>
+            <property name="variable">int:gesture</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="right_swipe_btn">
+            <property name="text" translatable="yes">Right swipe</property>
+            <property name="value">4</property>
+            <property name="variable">int:gesture</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="close_btn">
+            <property name="text" translatable="yes">Close</property>
+            <property name="value">6</property>
+            <property name="variable">int:gesture</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">3</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Radiobutton" id="scaling_btn">
+            <property name="text" translatable="yes">Scaling</property>
+            <property name="value">1</property>
+            <property name="variable">int:gesture</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">4</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Button" id="read_btn">
+            <property name="command">read_data</property>
+            <property name="text" translatable="yes">Leggi gesto</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">5</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Button" id="add_btn">
+            <property name="command">add_data</property>
+            <property name="text" translatable="yes">Aggiungi campione</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="pady">5</property>
+              <property name="propagate">True</property>
+              <property name="row">5</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Entry" id="Entry_1">
+            <property name="textvariable">string:file_to_save</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="pady">25</property>
+              <property name="propagate">True</property>
+              <property name="row">7</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Button" id="save_btn">
+            <property name="command">save_data</property>
+            <property name="text" translatable="yes">Salva file</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="pady">10</property>
+              <property name="propagate">True</property>
+              <property name="row">7</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Label" id="Label_7">
+            <property name="text" translatable="yes">Gesti salvati:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">6</property>
+              <property name="sticky">e</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Label" id="total_gestures">
+            <property name="text" translatable="yes">0</property>
+            <property name="textvariable">string:total_gestures</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">6</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Frame" id="status_frame">
+        <property name="height">300</property>
+        <property name="width">350</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="pady">15</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+          <property name="sticky">n</property>
+          <columns>
+            <column id="0">
+              <property name="minsize">200</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="tk.Label" id="connect_label">
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Label" id="hand_label">
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Label" id="status_label">
+            <property name="text" translatable="yes">Status:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Frame" id="load_frame">
+        <property name="height">300</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">2</property>
+          <property name="pady">15</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+          <property name="sticky">n</property>
+          <columns>
+            <column id="0">
+              <property name="minsize">150</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="tk.Label" id="label">
+            <property name="text" translatable="yes">Apri dataset da file:</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Entry" id="file_to_open">
+            <property name="textvariable">string:file_to_open</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Button" id="open_btn">
+            <property name="command">open_data</property>
+            <property name="text" translatable="yes">Apri file</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="padx">10</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Button" id="train_btn">
+            <property name="command">train</property>
+            <property name="text" translatable="yes">Addestra rete</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="pady">5</property>
+              <property name="propagate">False</property>
+              <property name="row">3</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Button" id="test_btn">
+            <property name="command">test</property>
+            <property name="text" translatable="yes">Test rete</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">4</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

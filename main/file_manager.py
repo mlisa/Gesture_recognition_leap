@@ -12,6 +12,7 @@ class Saver:
         with open('../data/' + file_name + '.json', 'w') as outfile:
             json.dump(output, outfile)
 
+
 class Loader:
 
     def load_file(self, file_name):
@@ -26,8 +27,8 @@ class Loader:
                 gesture = m.Gesture.gesture_from_code(gesture_code)
 
                 for vector in seq:
-                    sequence.add_data(m.AvolaModel(None, vector))
+                    sequence.add_data(m.HandModel(None, None, vector))
 
                 classified_sequence_list.append(m.ClassifiedSequence(sequence, gesture))
 
-            return classified_sequence_list
+        return classified_sequence_list

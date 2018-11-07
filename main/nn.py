@@ -3,6 +3,7 @@ import numpy as np
 import copy
 
 
+
 class RNN:
     use_model = False
 
@@ -17,8 +18,6 @@ class RNN:
         self.n_epochs = params['epoch']
         self.batch_size = params['batch']
 
-        print "---"
-        print self.n_inputs
         self.input_data = tf.placeholder(tf.float32, [None, self.n_steps, self.n_inputs])
         self.output_data = tf.placeholder(tf.int32, [None])
 
@@ -39,7 +38,7 @@ class RNN:
         self.model_saver = tf.train.Saver()
 
 
-    def train_net(self, training_data, should_save, model_name = None):
+    def train_net(self, training_data):
         with tf.Session() as sess:
             self.init.run()
             for epoch in range(self.n_epochs):
@@ -49,11 +48,9 @@ class RNN:
                     batch = training_list[:self.batch_size]
                     del training_list[:self.batch_size]
                     input_batch, output_batch = self.compute_batch(batch)
-                    print str(len(input_batch[0][0]))
                     sess.run(self.training_op, feed_dict={self.input_data: input_batch, self.output_data: output_batch})
-            if should_save:
                 self.model_saver = tf.train.Saver()
-                self.model_saver.save(sess, "/tmp/" + model_name + ".ckpt")
+                self.model_saver.save(sess, "/tmp/model-saved.ckpt")
 
         self.is_trained = True
         print "Training done!"
@@ -66,7 +63,6 @@ class RNN:
                 init = tf.global_variables_initializer()
                 init.run()
             output_val= sess.run(self.logits, feed_dict={self.input_data: x_seq})
-            print output_val[0]
             print "--"
             return np.argmax(output_val[0])
 
