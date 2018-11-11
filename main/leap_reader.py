@@ -10,6 +10,7 @@ class LeapReader:
         self.controller = Leap.Controller()
         self.timeout = timeout
         self.data = m.Sequence()
+        self.raw_data = m.Sequence()
         self.frames = []
         self.timeout_start = None
         self.previous_palm_position = None
@@ -26,7 +27,7 @@ class LeapReader:
 
     def compute_frame(self, frame):
         for hand in frame.hands:
-
+            self.raw_data.add_data(frame)
             if self.previous_palm_position is None:
                 self.previous_palm_position = hand.palm_position
 
@@ -35,8 +36,10 @@ class LeapReader:
             self.data.add_data(m.DiscretizedHandModel(hand_model))
 
     def read_data_from_leap(self):
+
         self.done_reading = False
         self.data = m.Sequence()
+        self.raw_data = m.Sequence()
         self.frames = []
         while len(self.frames) < self.fps * self.timeout:
             self.read()
@@ -46,7 +49,7 @@ class LeapReader:
             self.compute_frame(frame)
         self.done_reading = True
 
-        return self.data
+        return self.data, self.raw_data
 
     def check_if_one_hand(self):
         hands = self.controller.frame().hands

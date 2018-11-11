@@ -3,12 +3,13 @@ from enum import Enum
 
 class Gesture(Enum):
     extrusion = (0, "Extrusion")
-    scaling = (1, "Scaling")
+    enlargement = (1, "Scale enlargement")
     rotation = (2, "Rotation")
     translation =  (3, "Traslation")
     right_swipe  =  (4, "Right Swipe")
     left_swipe =  (5, "Left Swipe")
     close =  (6, "Close")
+    reduction = (7, "Scale reduction")
 
 
     def __init__(self, value, name):
@@ -20,7 +21,7 @@ class Gesture(Enum):
         if code == 0:
             return Gesture.extrusion
         elif code == 1:
-            return Gesture.scaling
+            return Gesture.enlargement
         elif code == 2:
             return Gesture.rotation
         elif code == 3:
@@ -31,6 +32,8 @@ class Gesture(Enum):
             return Gesture.left_swipe
         elif code == 6:
             return Gesture.close
+        elif code == 7:
+            return Gesture.reduction
 
 
 class FingerModel:
@@ -77,10 +80,15 @@ class HandModel:
             self.delta_palm_position = Leap.Vector(vector[0], vector[1], vector[2])
             self.arm_angle = vector[3]
             self.thumb = FingerModel(Leap.Finger.TYPE_THUMB, vector[4], vector[5])
+            self.fingers.append(self.thumb)
             self.index = FingerModel(Leap.Finger.TYPE_INDEX, vector[6], vector[7], vector[8])
+            self.fingers.append(self.index)
             self.middle = FingerModel(Leap.Finger.TYPE_MIDDLE, vector[9], vector[10], vector[11])
+            self.fingers.append(self.middle)
             self.ring = FingerModel(Leap.Finger.TYPE_RING, vector[12], vector[13], vector[14])
+            self.fingers.append(self.ring)
             self.pinky = FingerModel(Leap.Finger.TYPE_PINKY, vector[15], vector[16], vector[17])
+            self.fingers.append(self.pinky)
 
     def add_finger(self, finger):
         if finger.type is Leap.Finger.TYPE_THUMB:
@@ -148,6 +156,11 @@ class DiscretizedHandModel:
     def discretize(self, value):
         return round(value, 1)
 
+    def print_hand(self):
+        print "Palm position: ", self.delta_palm_position, "\n Arm angle:", self.arm_angle
+        for finger in self.fingers:
+            finger.print_finger()
+
 
 class Sequence:
 
@@ -156,6 +169,9 @@ class Sequence:
 
     def add_data(self, data):
         self.data_list.append(data)
+
+    def load_data(self, list):
+        self.data_list = list
 
     def discretize(self, value):
         return round(value, 1)
@@ -193,7 +209,6 @@ class Sequence:
         return raw_data_list
 
 
-
 class ClassifiedSequence:
 
     def __init__(self, sequence, gesture):
@@ -202,4 +217,3 @@ class ClassifiedSequence:
 
     def to_dict(self):
         return dict(gesture=self.gesture.code, sequence=self.sequence.raw_data())
-

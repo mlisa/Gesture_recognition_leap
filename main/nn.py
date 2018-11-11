@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import copy
-
+import Tkinter as tk
 
 
 class RNN:
@@ -42,7 +42,7 @@ class RNN:
         with tf.Session() as sess:
             self.init.run()
             for epoch in range(self.n_epochs):
-                print "Epoch " + str(epoch) + "..."
+                print "Epoch " + str(epoch) + "... \n"
                 training_list = copy.copy(training_data)
                 while len(training_list) > self.batch_size:
                     batch = training_list[:self.batch_size]
@@ -53,7 +53,6 @@ class RNN:
                 self.model_saver.save(sess, "/tmp/model-saved.ckpt")
 
         self.is_trained = True
-        print "Training done!"
 
     def predict(self, x_seq):
         with tf.Session() as sess:
@@ -63,7 +62,6 @@ class RNN:
                 init = tf.global_variables_initializer()
                 init.run()
             output_val= sess.run(self.logits, feed_dict={self.input_data: x_seq})
-            print "--"
             return np.argmax(output_val[0])
 
 

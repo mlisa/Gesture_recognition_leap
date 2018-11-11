@@ -1,4 +1,5 @@
 import pygubu
+import Tkinter as tk
 import model as m
 
 class Gui(pygubu.TkApplication):
@@ -18,10 +19,14 @@ class Gui(pygubu.TkApplication):
         self.hand_label = builder.get_object("hand_label")
 
         self.file_to_save = builder.get_variable("file_to_save")
-        self.file_to_open = builder.get_variable("file_to_open")
+        self.training_file_to_open = builder.get_variable("training_file_to_open")
+        self.test_file_to_open = builder.get_variable("test_file_to_open")
 
         self.gesture = builder.get_variable("gesture")
         self.total_gestures = builder.get_variable("total_gestures")
+
+        self.output_status = builder.get_object("output_status", self.master)
+        self.output_network = builder.get_object("output_network", self.master)
 
         builder.connect_callbacks(self)
 
@@ -29,7 +34,8 @@ class Gui(pygubu.TkApplication):
             'read_data': self.read_data,
             'save_data': self.save_data,
             'add_data': self.add_data,
-            'open_data': self.open_data,
+            'open_test_data': self.open_test_data,
+            'open_training_data': self.open_training_data,
             'train': self.train,
             'test': self.test
         }
@@ -43,10 +49,11 @@ class Gui(pygubu.TkApplication):
         self.set_hand_label(self.controller.check_hands_read())
         self.master.after(500, self.check)
 
+    def clean_status(self):
+        self.output_status.delete(0, tk.END)
 
     def read_data(self):
-        self.sequence = self.controller.read_from_leap()
-        print "Read " + str(len(self.sequence.data_list)) + " frames"
+        self.sequence, self.raw_sequence = self.controller.read_from_leap()
 
     def set_hand_label(self, n_hands):
         if n_hands == 1:
@@ -65,18 +72,22 @@ class Gui(pygubu.TkApplication):
         self.controller.save_to_file(self.file_to_save.get())
         self.total_gestures.set(str(len(self.controller.classified_sequences_list)))
 
-    def open_data(self):
-        self.controller.open_file_data(self.file_to_open.get())
+    def open_training_data(self):
+        self.controller.open_training_file(self.training_file_to_open.get())
+
+    def open_test_data(self):
+        self.controller.open_test_file(self.test_file_to_open.get())
 
     def add_data(self):
         gesture = m.Gesture.gesture_from_code(self.gesture.get())
         classified_sequence = m.ClassifiedSequence(self.sequence, gesture)
+        classified_raw_sequence = m.ClassifiedSequence(self.raw_sequence, gesture)
 
-        self.controller.add_to_list(classified_sequence)
+        self.controller.add_to_list(classified_sequence, classified_raw_sequence)
         self.total_gestures.set(str(len(self.controller.classified_sequences_list)))
 
     def train(self):
             self.controller.train()
 
     def test(self):
-        pass
+        self.controller.test()
