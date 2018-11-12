@@ -19,7 +19,7 @@ class Saver:
 
     def save_raw_data(self, classified_raw_sequence_list, file_name):
 
-        with open("../data/" + file_name + ".data", "wb") as data_file:
+        with open("../data/raw/" + file_name + ".data", "wb") as data_file:
             for classified_sequence in classified_raw_sequence_list:
                 for frame in classified_sequence.sequence.data_list:
                     serialized_tuple = frame.serialize
@@ -34,13 +34,11 @@ class Saver:
 
     def load_raw_data(self, file_name):
         classified_sequence_list = []
-        with open("../data/" + file_name + ".data", "rb") as data_file:
-            for j in range(0, 1):
+        with open("../data/raw/" + file_name + ".data", "rb") as data_file:
+            for j in range(0, 16):
                 frame_list = []
                 for i in range(0, 60):
-                    print i, j
                     next_block_size = data_file.read(4)
-                    print next_block_size
                     size = struct.unpack('i', next_block_size)[0]
                     data = data_file.read(size)
                     leap_byte_array = Leap.byte_array(size)

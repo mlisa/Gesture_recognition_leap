@@ -23,4 +23,3 @@ if __name__ == '__main__':
     gui.set_controller(controller)
     controller.set_gui(gui)
     gui.run()
-

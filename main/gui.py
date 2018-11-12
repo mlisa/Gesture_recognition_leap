@@ -8,7 +8,6 @@ class Gui(pygubu.TkApplication):
         self.controller = controller
 
     def _create_ui(self):
-        # 1: Create a builder
         self.builder = builder = pygubu.Builder()
         builder.add_from_file('../res/g.ui')
 
@@ -37,7 +36,8 @@ class Gui(pygubu.TkApplication):
             'open_test_data': self.open_test_data,
             'open_training_data': self.open_training_data,
             'train': self.train,
-            'test': self.test
+            'test': self.test,
+            'clean_status': self.clean_status
         }
 
         builder.connect_callbacks(callbacks)
@@ -50,7 +50,7 @@ class Gui(pygubu.TkApplication):
         self.master.after(500, self.check)
 
     def clean_status(self):
-        self.output_status.delete(0, tk.END)
+        self.output_status.delete("1.0", tk.END)
 
     def read_data(self):
         self.sequence, self.raw_sequence = self.controller.read_from_leap()

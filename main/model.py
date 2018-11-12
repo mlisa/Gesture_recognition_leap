@@ -5,12 +5,11 @@ class Gesture(Enum):
     extrusion = (0, "Extrusion")
     enlargement = (1, "Scale enlargement")
     rotation = (2, "Rotation")
-    translation =  (3, "Traslation")
+    translation =  (3, "Translation")
     right_swipe  =  (4, "Right Swipe")
     left_swipe =  (5, "Left Swipe")
     close =  (6, "Close")
     reduction = (7, "Scale reduction")
-
 
     def __init__(self, value, name):
         self.code = value
@@ -59,7 +58,7 @@ class HandModel:
             self.delta_palm_position = Leap.Vector.__sub__(hand.palm_position, previous_palm_position)
             self.arm_angle = hand.direction.angle_to(hand.arm.direction) * Leap.RAD_TO_DEG
 
-            fingers = self.fingersFromHand(hand)
+            fingers = self.fingers_from_hand(hand)
 
             for _, finger in fingers.iteritems():
                 hand_direction = hand.direction
@@ -109,7 +108,7 @@ class HandModel:
             finger.print_finger()
 
     @staticmethod
-    def fingersFromHand(hand):
+    def fingers_from_hand(hand):
         thumb = hand.fingers.finger_type(Leap.Finger.TYPE_THUMB)[0]
         index = hand.fingers.finger_type(Leap.Finger.TYPE_INDEX)[0]
         middle = hand.fingers.finger_type(Leap.Finger.TYPE_MIDDLE)[0]
@@ -119,6 +118,7 @@ class HandModel:
         fingers = dict(thumb=thumb, index=index, middle=middle, ring=ring, pinky=pinky)
 
         return fingers
+
 
 class DiscretizedHandModel:
 

@@ -218,6 +218,7 @@
         <child>
           <object class="tk.Button" id="clean_status_btn">
             <property name="text" translatable="yes">Cancella stato</property>
+            <property name="command">clean_status</property>
             <layout>
               <property name="column">0</property>
               <property name="propagate">True</property>

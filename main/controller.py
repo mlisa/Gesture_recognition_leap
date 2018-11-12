@@ -50,7 +50,6 @@ class Controller:
         saver = fl.Saver()
         saver.add_data_to_file(self.classified_sequences_list, file_name)
         saver.save_raw_data(self.classified_raw_sequences_list, "raw_" + file_name)
-        print saver.load_raw_data("raw_" + file_name)
         self.classified_sequences_list = []
         self.gui.output_status.insert(tk.END,  "Saved file " + file_name + "\n")
 

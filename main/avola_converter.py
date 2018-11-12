@@ -6,7 +6,7 @@ import Leap
 class AvolaModel:
     def __init__(self, hand=None, features=None):
         if hand is not None:
-            fingers = m.HandModel.fingersFromHand(hand)
+            fingers = m.HandModel.fingers_from_hand(hand)
 
             e2 = fingers['thumb'].bone(Leap.Bone.TYPE_DISTAL).direction.angle_to(
                 fingers['thumb'].bone(Leap.Bone.TYPE_PROXIMAL).direction)
