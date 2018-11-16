@@ -205,7 +205,6 @@ class Sequence:
                 raw_data_list.append(raw_data)
         else:
             return self.data_list
-
         return raw_data_list
 
 

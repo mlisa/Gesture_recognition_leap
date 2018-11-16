@@ -1,10 +1,9 @@
 import json
-import pickle as p
 import model as m
 import struct
 import ctypes
-import os
 import Leap
+import random
 
 
 class Saver:
@@ -20,6 +19,7 @@ class Saver:
     def save_raw_data(self, classified_raw_sequence_list, file_name):
 
         with open("../data/raw/" + file_name + ".data", "wb") as data_file:
+            print str(len(classified_raw_sequence_list))
             for classified_sequence in classified_raw_sequence_list:
                 for frame in classified_sequence.sequence.data_list:
                     serialized_tuple = frame.serialize
@@ -74,7 +74,28 @@ class Loader:
 
         return classified_sequence_list
 
+class Merger:
+
+    def merge_files(self, file_name_list):
+        merged_file_list = []
+        loader = Loader()
+        for file_name in file_name_list:
+            classified_list = loader.load_file(file_name)
+            for gesture in classified_list:
+                merged_file_list.append(gesture)
+
+        print str(len(merged_file_list))
+        random.shuffle(merged_file_list)
+        return merged_file_list
+
 
 if __name__ == '__main__':
+    list_1 = ["1_lisa", "2_sara", "3_ramo", "4_ale", "5_gian", "6_must", "7_ilar", "8_chia", "9_mart",
+            "10_fabi", "11_vitt", "12_fili", "13_bis", "14_fran", "15_jean", "16_alfr", "17_ele",
+            "18_clau", "19_mart", "20_lore", "21_qi", "22_bea", "23_eleo", "24_chia"]
+    list_2 = ["25_marc", "26_edo", "31_simo", "28_rob", "29_cla", "30_dav"]
+    merger = Merger()
     saver = Saver()
-    saver.load_raw_data("../data/raw_asd")
+    merged_list = merger.merge_files(list_2)
+    saver.add_data_to_file(merged_list, "test")
+

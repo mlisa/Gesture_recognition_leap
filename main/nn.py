@@ -37,45 +37,50 @@ class RNN:
         self.init = tf.global_variables_initializer()
         self.model_saver = tf.train.Saver()
 
-
     def train_net(self, training_data):
         with tf.Session() as sess:
             self.init.run()
+            self.accuracy_train = 0.0
+            training_input, training_output = self.compute_batch(training_data)
             for epoch in range(self.n_epochs):
-                print "Epoch " + str(epoch) + "... \n"
-                training_list = copy.copy(training_data)
-                while len(training_list) > self.batch_size:
-                    batch = training_list[:self.batch_size]
-                    del training_list[:self.batch_size]
-                    input_batch, output_batch = self.compute_batch(batch)
-                    sess.run(self.training_op, feed_dict={self.input_data: input_batch, self.output_data: output_batch})
-                self.model_saver = tf.train.Saver()
-                self.model_saver.save(sess, "/tmp/model-saved.ckpt")
+                if self.accuracy_train < 0.70:
+                    training_list = copy.copy(training_data)
+                    while len(training_list) > self.batch_size:
+                        batch = training_list[:self.batch_size]
+                        del training_list[:self.batch_size]
+                        self.input_batch, self.output_batch = self.compute_batch(batch)
+                        sess.run(self.training_op,
+                                 feed_dict={self.input_data: self.input_batch, self.output_data: self.output_batch})
+                    self.model_saver = tf.train.Saver()
+                    self.model_saver.save(sess, "/tmp/model-saved.ckpt")
+                    # if epoch % 50 == 0 or epoch == self.n_epochs-1:
+                    self.accuracy_train = self.accuracy.eval(feed_dict={self.input_data: training_input,
+                                                                        self.output_data: training_output})
+                    print "Epoch " + str(epoch) + ": accuracy on training set " + str(self.accuracy_train)
+                else:
+                    break
 
         self.is_trained = True
 
     def predict(self, x_seq):
         with tf.Session() as sess:
-            if self.use_model:
-                self.model_saver.restore(sess, "/tmp/" + self.model_to_load + ".ckpt")
-            else:
-                init = tf.global_variables_initializer()
-                init.run()
-            output_val= sess.run(self.logits, feed_dict={self.input_data: x_seq})
-            return np.argmax(output_val[0])
+            self.model_saver.restore(sess, "/tmp/model-saved.ckpt")
+            init = tf.global_variables_initializer()
+            init.run()
+        output_val = sess.run(self.logits, feed_dict={self.input_data: x_seq})
+        return np.argmax(output_val[0])
 
 
-    def load_model(self, model_name):
-        self.use_model = True
-        self.model_to_load = model_name
+def load_model(self, model_name):
+    self.use_model = True
+    self.model_to_load = model_name
 
 
-    def compute_batch(self, data_list):
-        input_batch = []
-        output_batch = []
-        for elem in data_list:
-            data = elem.to_dict()
-            input_batch.append(data['sequence'])
-            output_batch.append(data['gesture'])
-
-        return input_batch, output_batch
+def compute_batch(self, data_list):
+    input_batch = []
+    output_batch = []
+    for elem in data_list:
+        data = elem.to_dict()
+        input_batch.append(data['sequence'])
+        output_batch.append(data['gesture'])
+    return input_batch, output_batch
