@@ -3,6 +3,7 @@ import file_manager as fl
 import nn as net
 import Tkinter as tk
 
+
 class TestController:
 
     def __init__(self, params):
@@ -25,10 +26,10 @@ class TestController:
         return loader.load_file(file_name)
 
     def train(self):
-        self.rnn.train_net(self.training_data)
+        self.rnn.train_net(self.training_data, self.test_data)
 
     def test(self):
-        confusion_matrix =[[0 for x in range(8)] for y in range(8)]
+        confusion_matrix = [[0 for x in range(8)] for y in range(8)]
         correct = 0
         test_size = len(self.test_data)
 
@@ -40,7 +41,7 @@ class TestController:
 
         accuracy = float(correct) * 100.0 / float(test_size)
 
-        for i in range(0,8):
+        for i in range(0, 8):
             print confusion_matrix[i]
 
         print "Done with accuracy: " + str(accuracy)

@@ -10,7 +10,7 @@ if __name__ == '__main__':
     params['output'] = 8
     params['layer'] = 4
     params['rate'] = 0.0001
-    params['epoch'] = 300
+    params['epoch'] = 1
     params['batch'] = 64
 
     training_file = sys.argv[1]
@@ -25,5 +25,4 @@ if __name__ == '__main__':
 
     print "Training done! \n \n "
 
-    controller.test()
-
+    #controller.test()

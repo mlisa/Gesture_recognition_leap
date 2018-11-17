@@ -43,7 +43,7 @@ class LeapReader:
         self.frames = []
         while len(self.frames) < self.fps * self.timeout:
             self.read()
-            time.sleep(1.0/self.fps)
+            time.sleep(1.0 / self.fps)
 
         for frame in self.frames:
             self.compute_frame(frame)
@@ -54,8 +54,3 @@ class LeapReader:
     def check_if_one_hand(self):
         hands = self.controller.frame().hands
         return len(hands)
-
-
-
-
-

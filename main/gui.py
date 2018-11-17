@@ -2,6 +2,7 @@ import pygubu
 import Tkinter as tk
 import model as m
 
+
 class Gui(pygubu.TkApplication):
 
     def set_controller(self, controller):
@@ -43,7 +44,6 @@ class Gui(pygubu.TkApplication):
         builder.connect_callbacks(callbacks)
         self.master.after(500, self.check)
 
-
     def check(self):
         self.set_connected(self.controller.is_leap_connected())
         self.set_hand_label(self.controller.check_hands_read())
@@ -60,7 +60,6 @@ class Gui(pygubu.TkApplication):
             self.hand_label.configure(text="OK!")
         else:
             self.hand_label.configure(text="Richiesta una mano, lette " + str(n_hands))
-
 
     def set_connected(self, connected):
         if connected:
@@ -87,7 +86,7 @@ class Gui(pygubu.TkApplication):
         self.total_gestures.set(str(len(self.controller.classified_sequences_list)))
 
     def train(self):
-            self.controller.train()
+        self.controller.train()
 
     def test(self):
         self.controller.test()

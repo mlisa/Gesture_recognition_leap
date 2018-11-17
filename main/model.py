@@ -1,14 +1,15 @@
 import Leap
 from enum import Enum
 
+
 class Gesture(Enum):
     extrusion = (0, "Extrusion")
     enlargement = (1, "Scale enlargement")
     rotation = (2, "Rotation")
-    translation =  (3, "Translation")
-    right_swipe  =  (4, "Right Swipe")
-    left_swipe =  (5, "Left Swipe")
-    close =  (6, "Close")
+    translation = (3, "Translation")
+    right_swipe = (4, "Right Swipe")
+    left_swipe = (5, "Left Swipe")
+    close = (6, "Close")
     reduction = (7, "Scale reduction")
 
     def __init__(self, value, name):
@@ -46,9 +47,10 @@ class FingerModel:
 
     def print_finger(self):
         print "Finger type", self.finger_names[self.type], "--------- " \
-            "\n Proximal angle: ", self.proximal_angle, \
+                                                           "\n Proximal angle: ", self.proximal_angle, \
             "\n Intermediate angle:", self.intermediate_angle, \
             "\n Distal angle:", self.distal_angle
+
 
 class HandModel:
 
@@ -130,13 +132,13 @@ class DiscretizedHandModel:
             if finger.type != Leap.Finger.TYPE_THUMB:
                 discretized_intermediate_angle = self.discretize(finger.intermediate_angle)
                 self.add_finger(FingerModel(finger.type,
-                                                                discretized_proximal_angle,
-                                                                discretized_distal_angle,
-                                                                discretized_intermediate_angle))
+                                            discretized_proximal_angle,
+                                            discretized_distal_angle,
+                                            discretized_intermediate_angle))
             else:
                 self.add_finger(FingerModel(finger.type,
-                                                                discretized_proximal_angle,
-                                                                discretized_distal_angle))
+                                            discretized_proximal_angle,
+                                            discretized_distal_angle))
         self.delta_palm_position = hand_model.delta_palm_position
         self.arm_angle = self.discretize(hand_model.arm_angle)
 
@@ -180,8 +182,9 @@ class Sequence:
         raw_data_list = []
         if isinstance(self.data_list[0], DiscretizedHandModel):
             for hand_model in self.data_list:
-                raw_data = [self.discretize(hand_model.delta_palm_position.x), self.discretize(hand_model.delta_palm_position.y),
-                           self.discretize(hand_model.delta_palm_position.z), hand_model.arm_angle]
+                raw_data = [self.discretize(hand_model.delta_palm_position.x),
+                            self.discretize(hand_model.delta_palm_position.y),
+                            self.discretize(hand_model.delta_palm_position.z), hand_model.arm_angle]
 
                 raw_data.append(hand_model.thumb.proximal_angle)
                 raw_data.append(hand_model.thumb.distal_angle)
