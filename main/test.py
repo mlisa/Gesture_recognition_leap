@@ -10,7 +10,7 @@ if __name__ == '__main__':
     params['output'] = 8
     params['layer'] = 4
     params['rate'] = 0.0001
-    params['epoch'] = 1
+    params['epoch'] = 3
     params['batch'] = 64
 
     training_file = sys.argv[1]

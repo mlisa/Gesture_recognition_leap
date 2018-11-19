@@ -74,6 +74,15 @@ class Loader:
 
         return classified_sequence_list
 
+    def compute_batch(self, data_list):
+        input_batch = []
+        output_batch = []
+        for elem in data_list:
+            data = elem.to_dict()
+            input_batch.append(data['sequence'])
+            output_batch.append(data['gesture'])
+        return input_batch, output_batch
+
 class Merger:
 
     def merge_files(self, file_name_list):

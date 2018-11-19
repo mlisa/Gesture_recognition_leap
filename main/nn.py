@@ -21,12 +21,18 @@ class RNN:
         self.input_data = tf.placeholder(tf.float32, [None, self.n_steps, self.n_inputs])
         self.output_data = tf.placeholder(tf.int32, [None])
 
-        lstm_cell = [tf.contrib.rnn.BasicLSTMCell(self.n_neurons) for _ in range(self.n_layers)]
-        multi_cell = tf.contrib.rnn.MultiRNNCell(lstm_cell)
+        #lstm_cell = [tf.contrib.rnn.BasicLSTMCell(self.n_neurons) for _ in range(self.n_layers)]
+        #multi_cell = tf.contrib.rnn.MultiRNNCell(lstm_cell)
 
+        gru_cell = [tf.contrib.rnn.GRUBlockCellV2(num_units=self.n_neurons) for _ in range(self.n_layers)]
+        multi_cell = tf.contrib.rnn.MultiRNNCell(gru_cell)
         self.outputs, self.final_output = tf.nn.dynamic_rnn(multi_cell, self.input_data, dtype=tf.float32)
-        top_layer_h_state = self.final_output[-1][1]
-        self.logits = tf.layers.dense(top_layer_h_state, self.n_outputs)
+
+        #lstm_cell = tf.contrib.cudnn_rnn.CudnnLSTM(self.n_layers, self.n_neurons)
+        #self.outputs, self.final_output = lstm_cell(inputs=self.input_data, training=True)
+        print self.final_output
+        #top_layer_h_state = self.final_output[-1][1]
+        self.logits = tf.layers.dense(self.final_output[-1], self.n_outputs)
         xentropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.output_data, logits=self.logits)
         self.loss = tf.reduce_mean(xentropy, name="loss")
 
@@ -43,7 +49,6 @@ class RNN:
 
         self.init = tf.global_variables_initializer()
         self.model_saver = tf.train.Saver()
-        self.prediction = tf.argmax(self.logits, 1)
 
     def train_net(self, training_data, test_data):
         with tf.Session() as sess:
@@ -64,9 +69,6 @@ class RNN:
                 for data in test_input:
                     output_val = sess.run(self.logits, feed_dict={self.input_data: [data]})
                     self.result.append(np.argmax(output_val[0]))
-                print str(len(self.result))
-                "..."
-                print str(len(test_output))
                 loss_summary = self.loss_summary.eval(feed_dict={self.input_data: training_input, self.output_data: training_output})
 
 
