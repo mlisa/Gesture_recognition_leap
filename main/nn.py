@@ -21,25 +21,26 @@ class RNN:
         self.input_data = tf.placeholder(tf.float32, [None, self.n_steps, self.n_inputs])
         self.output_data = tf.placeholder(tf.int32, [None])
 
-        #lstm_cell = [tf.contrib.rnn.BasicLSTMCell(self.n_neurons) for _ in range(self.n_layers)]
-        #multi_cell = tf.contrib.rnn.MultiRNNCell(lstm_cell)
-
-        gru_cell = [tf.contrib.rnn.GRUBlockCellV2(num_units=self.n_neurons) for _ in range(self.n_layers)]
-        multi_cell = tf.contrib.rnn.MultiRNNCell(gru_cell)
+        lstm_cell = [tf.contrib.rnn.BasicLSTMCell(self.n_neurons) for _ in range(self.n_layers)]
+        multi_cell = tf.contrib.rnn.MultiRNNCell(lstm_cell)
         self.outputs, self.final_output = tf.nn.dynamic_rnn(multi_cell, self.input_data, dtype=tf.float32)
 
-        #lstm_cell = tf.contrib.cudnn_rnn.CudnnLSTM(self.n_layers, self.n_neurons)
-        #self.outputs, self.final_output = lstm_cell(inputs=self.input_data, training=True)
-        print self.final_output
-        #top_layer_h_state = self.final_output[-1][1]
-        self.logits = tf.layers.dense(self.final_output[-1], self.n_outputs)
+        # lstm_cell = tf.contrib.cudnn_rnn.CudnnLSTM(self.n_layers, self.n_neurons)
+        # self.outputs, self.final_output = lstm_cell(inputs=self.input_data)
+
+        # gru_cell = [tf.contrib.rnn.GRUBlockCellV2(num_units=self.n_neurons) for _ in range(self.n_layers)]
+        # multi_cell = tf.contrib.rnn.MultiRNNCell(gru_cell)
+        # self.outputs, self.final_output = tf.nn.dynamic_rnn(multi_cell, self.input_data, dtype=tf.float32)
+
+        top_layer_h_state = self.final_output[-1][1]
+        self.logits = tf.layers.dense(top_layer_h_state, self.n_outputs)
         xentropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.output_data, logits=self.logits)
         self.loss = tf.reduce_mean(xentropy, name="loss")
 
         self.loss_writer = tf.summary.FileWriter("../log/loss", tf.get_default_graph())
         self.train_writer = tf.summary.FileWriter("../log/train", tf.get_default_graph())
         self.test_writer = tf.summary.FileWriter("../log/test", tf.get_default_graph())
-        optimizer = tf.train.AdamOptimizer(self.learning_rate)
+        optimizer = tf.train.MomentumOptimizer(self.learning_rate, 0.9, use_nesterov=True)
         self.training_op = optimizer.minimize(self.loss)
         correct = tf.nn.in_top_k(self.logits, self.output_data, 1)
         self.accuracy = tf.reduce_mean(tf.cast(correct, tf.float32))

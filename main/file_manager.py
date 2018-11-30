@@ -102,9 +102,25 @@ if __name__ == '__main__':
     list_1 = ["1_lisa", "2_sara", "3_ramo", "4_ale", "5_gian", "6_must", "7_ilar", "8_chia", "9_mart",
             "10_fabi", "11_vitt", "12_fili", "13_bis", "14_fran", "15_jean", "16_alfr", "17_ele",
             "18_clau", "19_mart", "20_lore", "21_qi", "22_bea", "23_eleo", "24_chia"]
-    list_2 = ["25_marc", "26_edo", "31_simo", "28_rob", "29_cla", "30_dav"]
+
+    list_aug =  ["1_lisa", "2_sara", "3_ramo", "4_ale", "5_gian", "6_must", "7_ilar", "8_chia", "9_mart",
+            "10_fabi", "11_vitt", "12_fili", "13_bis", "14_fran", "15_jean", "16_alfr", "17_ele",
+            "18_clau", "19_mart", "20_lore", "21_qi", "22_bea", "23_eleo", "24_chia", "aug/1_aug_1_lisa", "aug/1_aug_2_sara", "aug/1_aug_3_ramo", "aug/1_aug_4_ale", "aug/1_aug_5_gian", "aug/1_aug_6_must", "aug/1_aug_7_ilar", "aug/1_aug_8_chia", "aug/1_aug_9_mart",
+            "aug/1_aug_10_fabi", "aug/1_aug_11_vitt", "aug/1_aug_12_fili", "aug/1_aug_13_bis", "aug/1_aug_14_fran", "aug/1_aug_15_jean", "aug/1_aug_16_alfr", "aug/1_aug_17_ele",
+            "aug/1_aug_18_clau", "aug/1_aug_19_mart", "aug/1_aug_20_lore", "aug/1_aug_21_qi", "aug/1_aug_22_bea", "aug/1_aug_23_eleo", "aug/1_aug_24_chia"]
+
+    list_aug2 =  ["1_lisa", "2_sara", "3_ramo", "4_ale", "5_gian", "6_must", "7_ilar", "8_chia", "9_mart",
+            "10_fabi", "11_vitt", "12_fili", "13_bis", "14_fran", "15_jean", "16_alfr", "17_ele",
+            "18_clau", "19_mart", "20_lore", "21_qi", "22_bea", "23_eleo", "24_chia", "aug/1_aug_1_lisa", "aug/1_aug_2_sara", "aug/1_aug_3_ramo", "aug/1_aug_4_ale", "aug/1_aug_5_gian", "aug/1_aug_6_must", "aug/1_aug_7_ilar", "aug/1_aug_8_chia", "aug/1_aug_9_mart",
+            "aug/1_aug_10_fabi", "aug/1_aug_11_vitt", "aug/1_aug_12_fili", "aug/1_aug_13_bis", "aug/1_aug_14_fran", "aug/1_aug_15_jean", "aug/1_aug_16_alfr", "aug/1_aug_17_ele",
+            "aug/1_aug_18_clau", "aug/1_aug_19_mart", "aug/1_aug_20_lore", "aug/1_aug_21_qi", "aug/1_aug_22_bea", "aug/1_aug_23_eleo", "aug/1_aug_24_chia", "aug/2_aug_1_lisa", "aug/2_aug_2_sara", "aug/2_aug_3_ramo", "aug/2_aug_4_ale", "aug/2_aug_5_gian", "aug/2_aug_6_must", "aug/2_aug_7_ilar", "aug/2_aug_8_chia", "aug/2_aug_9_mart",
+            "aug/2_aug_10_fabi", "aug/2_aug_11_vitt", "aug/2_aug_12_fili", "aug/2_aug_13_bis", "aug/2_aug_14_fran", "aug/2_aug_15_jean", "aug/2_aug_16_alfr", "aug/2_aug_17_ele",
+            "aug/2_aug_18_clau", "aug/2_aug_19_mart", "aug/2_aug_20_lore", "aug/2_aug_21_qi", "aug/2_aug_22_bea", "aug/2_aug_23_eleo", "aug/2_aug_24_chia", "aug/3_aug_1_lisa", "aug/3_aug_2_sara", "aug/3_aug_3_ramo", "aug/3_aug_4_ale", "aug/3_aug_5_gian", "aug/3_aug_6_must", "aug/3_aug_7_ilar", "aug/3_aug_8_chia", "aug/3_aug_9_mart",
+            "aug/3_aug_10_fabi", "aug/3_aug_11_vitt", "aug/3_aug_12_fili", "aug/3_aug_13_bis", "aug/3_aug_14_fran", "aug/3_aug_15_jean", "aug/3_aug_16_alfr", "aug/3_aug_17_ele",
+            "aug/3_aug_18_clau", "aug/3_aug_19_mart", "aug/3_aug_20_lore", "aug/3_aug_21_qi", "aug/3_aug_22_bea", "aug/3_aug_23_eleo", "aug/3_aug_24_chia"]
+    #list_2 = ["25_marc", "26_edo", "31_simo", "28_rob", "29_cla", "30_dav"]
     merger = Merger()
     saver = Saver()
-    merged_list = merger.merge_files(list_2)
-    saver.add_data_to_file(merged_list, "test")
+    merged_list = merger.merge_files(list_aug2)
+    saver.add_data_to_file(merged_list, "2augtrain")
 

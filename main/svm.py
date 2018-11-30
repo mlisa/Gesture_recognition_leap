@@ -23,10 +23,15 @@ def test_svm(x_train, y_train, x_test, y_test):
     print(classification_report(y_test, y_pred))
 
 def test_knn(x_train, y_train, x_test, y_test):
-    knn =KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
-                         metric_params=None, n_jobs=None, n_neighbors=3, p=2,
-                         weights='uniform')
-    knn.fit(x_train, y_train)
+    parameters =[
+        {'algorithm': ['auto'], 'leaf_size': [40,30,20], 'metric': ['minkowski', 'chebyshev', 'manhattan']},
+    ]
+
+    clf = GridSearchCV(KNeighborsClassifier(), parameters, cv=5, n_jobs=-1)
+
+    clf.fit(x_train, y_train)
+
+    knn = clf.best_estimator_
 
     y_pred = knn.predict(x_test)
 

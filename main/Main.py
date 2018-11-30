@@ -7,7 +7,7 @@ if __name__ == '__main__':
     params = {}
     params['input'] = 18
     params['neuron'] = 200
-    params['output'] = 7
+    params['output'] = 8
     params['layer'] = 4
     params['rate'] = 0.0001
     params['epoch'] = 20
