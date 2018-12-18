@@ -23,6 +23,3 @@ if __name__ == '__main__':
 
     controller.train()
 
-    print "Training done! \n \n "
-
-    #controller.test()
